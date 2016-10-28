@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+/temp
+/static/node_modules/
+/ringo-app/config/config.json
+/ringo-app/config/config.production.json
+/tunnel.sh
