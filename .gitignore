@@ -5,3 +5,4 @@
 /ringo-app/config/config.json
 /ringo-app/config/config.production.json
 /tunnel.sh
+/ringo-app/config/config.development.json

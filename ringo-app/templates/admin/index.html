@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col s12"><h4>Actions</h4></div>
+    <div class="col s4">
+        <a href="/admin/addConversation" class="waves-effect waves-light btn blue-grey lighten-4 grey-text text-darken-4">
+            <i class="material-icons left">textsms</i> Add Conversation
+        </a>
+    </div>
+    <div class="col s4">
+        <a href="/admin/submissions" class="waves-effect waves-light btn blue-grey lighten-4 grey-text text-darken-4">
+            <i class="material-icons left">question_answer</i> Submissions
+        </a>
+    </div>
+    <div class="col s4">
+        <a href="/admin/signout" class="waves-effect waves-light btn blue-grey lighten-4 grey-text text-darken-4">
+            <i class="material-icons left">power_settings_new</i> Sign out
+        </a>
+    </div>
+</div>
+
+{% endblock %}

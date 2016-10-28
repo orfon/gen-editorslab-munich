@@ -1,0 +1,27 @@
+{
+    "name": "gen-editorslab-munich",
+    "version": "1.0",
+    "description": "Team ORF's project for the GEN Editors Lab at Sueddeutsche Zeitung.",
+    "keywords": [
+        "gen", "editorslab"
+    ],
+    "author": {
+        "name":  "Philipp Naderer",
+        "web":   "http://dev.orf.at",
+        "email": "philipp.naderer@orf.at"
+    },
+    "dependencies": {
+        "gestalt": ">=0.1.1",
+        "stick": ">=0.5.0",
+        "validator": ">=0.3",
+        "reinhardt": ">=0.4",
+        "ringo-sqlstore": ">=0.7.3",
+        "telegram": ">=1.0.0",
+        "fbmessenger": ">=2.1.0",
+        "poststempel": ">=0.1.0"
+    },
+    "engines": {
+        "ringojs": ">=1.0.0"
+    },
+    "main": "./main.js"
+}

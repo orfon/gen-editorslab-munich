@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if conversations.length < 1 %}
+<div class="row" style="margin-top: 3rem;">
+    <div class="col s12">
+        <em>No conversations to join yet.</em>
+    </div>
+</div>
+{% else %}
+<h4>Current Open Surveys</h4>
+{% endif %}
+
+{% for conversation in conversations %}
+<div class="row">
+    <div class="col s6">
+        <h5>{{ conversation.name }}</h5>
+        {% include "sendToMessenger.html" with conversation=conversation messenger=messenger %}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

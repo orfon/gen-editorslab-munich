@@ -1,0 +1,35 @@
+<html>
+<head>
+    <title>ORF Bot-Ox</title>
+
+    <link rel="stylesheet" href="https://orf.at/fonts/fonts.css" />
+    <link rel="stylesheet" href="/static/build.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+</head>
+<body>
+
+<nav>
+    <div class="nav-wrapper">
+        <div class="container">
+            <a href="/admin/" class="brand-logo">ORF Bot-Ox</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    {% block content %}
+    {% endblock content %}
+</div>
+
+<script type="text/javascript" src="/static/templates.js"></script>
+<script type="text/javascript" src="/static/build.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+
+
+{% block script %}
+{% endblock %}
+
+</body>
+</html>
