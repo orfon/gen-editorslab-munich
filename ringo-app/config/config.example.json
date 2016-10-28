@@ -1,0 +1,38 @@
+{
+    "vhosts": ["localhost", "orf-editorslab.dev", "some-https-tunnel-by.ngrok.io"],
+    "server": {
+        "http": {
+            "host": "0.0.0.0",
+            "port": 8080
+        }
+    },
+    "db": {
+        "connection": {
+            "url": "jdbc:postgresql://127.0.0.1:5432/editorslab_munich",
+            "driver": "org.postgresql.Driver",
+            "user": "editorslab",
+            "password": "1234567890",
+            "minimumIdle": 5,
+            "maximumPoolSize": 10,
+            "connectionTimeout": 15000
+        },
+        "cacheSize": 1000
+    },
+    "cache": {
+        "name": "botox-cache",
+        "persistenceFile": "/tmp/cachepersistence",
+        "heapEntries": 1000,
+        "persistenceFileSize": 30,
+        "ttiExpiry": 10
+    },
+    "messenger": {
+        "appId": "111222333444555",
+        "callbackPath": "/secret-callback-url/with-random-1234567890/",
+        "pageId": "111222333444555",
+        "pageToken": "INSERT TOKEN HERE",
+        "verifyToken": "messenger-verification-token"
+    },
+    "site": {
+        "baseUrl": "http://orf-editorslab.dev/"
+    }
+}
