@@ -262,6 +262,10 @@ $(document).ready(function() {
         }
         Materialize.updateTextFields();
     });
+
+    $("#flowPanel").on("submit", function(event) {
+        $("#interactionList input, #interactionList textarea").prop("disabled", false);
+    });
 });
 </script>
 {% endblock %}
