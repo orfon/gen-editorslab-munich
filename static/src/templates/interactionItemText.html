@@ -1,0 +1,20 @@
+<div class="collapsible-header">
+    <i class="material-icons">subject</i>
+    <span class="fieldName blue-grey lighten-5">{{ fieldName }}</span>
+</div>
+<div class="collapsible-body">
+    <div class="collapsible-body-wrapper">
+        <div class="row">
+            <div class="input-field col s12">
+                <input disabled value="{{ value }}" name="interactions[text{{ itemPos }}][message]" id="text{{ itemPos }}" type="text" class="validate" maxlength="320" required>
+                <label for="text{{ itemPos }}">Text</label>
+            </div>
+            <div class="col s12">
+                <button class="removeItem waves-effect waves-light btn red lighten-2">
+                    <i class="material-icons left">delete</i>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

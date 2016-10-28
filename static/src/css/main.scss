@@ -1,0 +1,83 @@
+$blue: #5286c1;
+
+body {
+    font-family: "ORF ON", Helvetica, Arial, sans-serif;
+}
+
+.nav-wrapper {
+	background-color: $blue !important;
+}
+
+.collapsible-header {
+    position: relative;
+
+    .fieldName {
+        font-family: "ORF ON Condensed SC", Helvetica, Arial, sans-serif;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+.collapsible-body {
+    .collapsible-body-wrapper {
+        margin: 0;
+        padding: 1rem 2rem 0.5rem 2rem;
+    }
+
+    .row {
+        margin-bottom: 0;
+    }
+}
+
+.embedCode {
+    font-size: 0.625rem !important;
+    font-family: monospace !important;
+    margin: 0 !important;
+    height: 1rem !important;
+}
+
+.submissionTable {
+    font-size: 0.75rem;
+
+    td, th {
+        padding: 5px 2px
+    }
+}
+
+input,
+label {
+    &.prefill {
+        display: none;
+
+        &.selected {
+            display: block;
+        }
+    }
+}
+
+.quickReplyRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .input-field {
+        box-sizing: border-box;
+        width: calc(20% - 5px);
+    }
+}
+
+.removeItem {
+    margin-bottom: 0.75rem;
+}
+
+.submissionHeadline {
+    margin: 1.5rem 0 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+
+    h5 {
+        display: inline-block;
+        padding-right: 20px;
+        margin: 0;
+        align-self: center;
+    }
+}

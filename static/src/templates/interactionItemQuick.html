@@ -1,0 +1,23 @@
+<div class="collapsible-header">
+    <i class="material-icons">list</i>
+    <span class="fieldName blue-grey lighten-5">{{ fieldName }}</span>
+</div>
+<div class="collapsible-body">
+    <div class="collapsible-body-wrapper">
+        <div class="row">
+            <div class="col s12">
+                The first line is the quick reply's question, the following the various reply button texts.
+            </div>
+            <div class="input-field col s12">
+                <textarea disabled id="quick{{ itemPos }}" name="interactions[quick{{ itemPos }}][message]" class="materialize-textarea" required>{{ value }}</textarea>
+                <label for="quick{{ itemPos }}">Quick Replies</label>
+            </div>
+            <div class="col s12">
+                <button class="removeItem waves-effect waves-light btn red lighten-2">
+                    <i class="material-icons left">delete</i>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
