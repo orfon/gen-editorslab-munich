@@ -43,19 +43,27 @@
                     </tr>
                     {% endfor %}
                     </tbody>
+                    {% if conversation.submissionCount > conversation.submissions.length %}
+                    <tfoot>
+                        <tr>
+                            <th colspan="{{ conversation.interactions.length|add:'2' }}">Total: {{ conversation.submissionCount }} Submissions</th>
+                        </tr>
+                    </tfoot>
+                    {% endif %}
                 </table>
             {% else %}
                 <em>No submission yet.</em>
             {% endif %}
         </div>
-
-        {% if conversation.submissions.length > 0 %}
-        <div class="col s12">
-
-        </div>
-        {% endif %}
     </div>
     {% endfor %}
+
+    {% if prev >= 0 %}
+        <a class="waves-effect waves-light btn blue-grey lighten-4 grey-text text-darken-4" href="?page={{ prev }}"><i class="material-icons left">skip_previous</i>previous</a>
+    {% endif %}
+    {% if next > 0 %}
+        <a class="waves-effect waves-light btn blue-grey lighten-4 grey-text text-darken-4" href="?page={{ next }}"><i class="material-icons right">skip_next</i>next</a>
+    {% endif %}
 
 
 {% endblock %}

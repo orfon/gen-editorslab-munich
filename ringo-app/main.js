@@ -18,7 +18,9 @@ const stop = exports.stop = function() {
 };
 
 const start = exports.start = function() {
-    log.info("Starting application birdie");
+    // fixme implement quick menu and start info for bot
+
+    log.info("Starting webserver for botox");
     server = httpServer.build()
         .serveApplication("/", module.resolve("./app/routes"), {
             "virtualHosts": config.get("vhosts")

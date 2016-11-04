@@ -10,6 +10,7 @@ const {createDigest} = require("./utils");
 const store = require("./store");
 const {AdminUser, Conversation, Interaction} = require("./models/all");
 
+const {Validator} = require("validator");
 const {Reinhardt} = require("reinhardt");
 const reinhardt = new Reinhardt({
     loader: module.resolve("../templates/")
@@ -82,8 +83,22 @@ app.get("/submissions", function(req) {
         return response.redirect(config.get("site:baseUrl"));
     }
 
-    let allConversations = Conversation.getAll();
-    allConversations = allConversations.map(function(conversation) {
+    const PER_PAGE = 5;
+    const count = Conversation.getCount();
+    const MAX_PAGE = Math.ceil(count / PER_PAGE) - 1;
+
+    const validator = new Validator(req.queryParams);
+    validator.validate("page")
+        .isDefined("page not defined")
+        .isInt("Invalid page!")
+        .toInt().greaterThan(0, "page must be greater than 0!").lessThan(MAX_PAGE + 1);
+
+    const CUR_PAGE = validator.hasFailures() ? 0 : validator.getValue("page");
+
+    let offset = PER_PAGE * CUR_PAGE;
+    let pagedConversations = Conversation.getPage(offset, PER_PAGE);
+
+    pagedConversations = pagedConversations.map(function(conversation) {
         let clone = {
             "slug": conversation.slug,
             "name": conversation.name,
@@ -92,7 +107,6 @@ app.get("/submissions", function(req) {
 
         // refresh data
         conversation.interactions.invalidate();
-        conversation.submissions.invalidate();
 
         clone.interactions = conversation.interactions.map(function(interaction) {
             return {
@@ -103,16 +117,8 @@ app.get("/submissions", function(req) {
             };
         });
 
-        clone.interactions = conversation.interactions.map(function(interaction) {
-            return {
-                "fieldName": interaction.fieldName,
-                "type": interaction.type,
-                "interactionSequencePosition": interaction.interactionSequencePosition,
-                "message": interaction.message
-            };
-        });
-
-        clone.submissions = conversation.submissions.map(function(submission) {
+        clone.submissionCount = Conversation.getSubmissionCount(conversation);
+        clone.submissions = Conversation.getSubmissions(conversation, 0, 5).map(function(submission) {
             return {
                 "created": submission.created,
                 "sender": submission.sender,
@@ -123,9 +129,19 @@ app.get("/submissions", function(req) {
         return clone;
     });
 
-    return response.html(reinhardt.getTemplate("admin/submissions.html").render({
-        conversations: allConversations
-    }));
+    const ctx = {
+        conversations: pagedConversations
+    };
+
+    if (CUR_PAGE >= 1) {
+        ctx.prev = CUR_PAGE - 1;
+    }
+
+    if (CUR_PAGE < MAX_PAGE) {
+        ctx.next = CUR_PAGE + 1;
+    }
+
+    return response.html(reinhardt.getTemplate("admin/submissions.html").render(ctx));
 });
 
 app.get("/addConversation", function(req) {
@@ -149,45 +165,61 @@ app.post("/addConversation", function(req) {
         return response.redirect(config.get("site:baseUrl"));
     }
 
-    // fixme validate the request here ...
+    const validator = new Validator(req.postParams);
+    validator.validate("name", true)
+        .isDefined("Name is missing!")
+        .minLength(3, "Name is too short!")
+        .maxLength(20, "Name is too long!");
 
-    if (req.postParams.name == null) {
+    validator.validate("greeting", true)
+        .isDefined("Greeting text is missing!")
+        .maxLength(320, "Greeting text is too long!");
+
+    validator.validate("interactions")
+        .isDefined("Interactions missing!")
+        .passes(function(interactions) {
+            for (let field in interactions) {
+                let iData = interactions[field];
+
+                console.log(iData.toSource())
+
+                // quick reply needs two options
+                if (iData.type === "quick" && iData.message.trim().split("\n").length < 2) {
+                    return false;
+                }
+
+                // emtpy messages are not allowed
+                if ((iData.fieldName || "").trim().length < 1 || (iData.message || "").trim().length < 1) {
+                    return false
+                }
+
+                if (Number.isNaN(parseInt(iData.interactionSequencePosition, 10))) {
+                    return false;
+                }
+
+                return true;
+            }
+        }, "Invalid interactions provided!");
+
+    if (validator.hasFailures()) {
         log.error("Invalid form submit!");
-        return response.redirect("/");
+        return response.text(JSON.stringify(validator.getMessages(), null, 2)).bad();
     }
 
-    let slug = req.postParams.name.toString().toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+/, '')
-        .replace(/-+$/, '');
-
-    if (slug.length < 1) {
-        log.error("Invalid form submit!");
-        return response.redirect("/");
-    }
+    let slug = String(Math.ceil(1000000000 * Math.random())) + validator.getValue("name").toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\-]+/g, '')
+            .replace(/\-\-+/g, '-')
+            .replace(/^-+/, '')
+            .replace(/-+$/, '');
 
     if (Conversation.getBySlug(slug) != null) {
         return response.text("Conversation for slug " + slug + " already exists.").bad();
     }
 
-    // basic validation
-    for (let field in req.postParams.interactions) {
-        let iData = req.postParams.interactions[field];
-
-        if (iData.type === "quick" && iData.message.trim().split("\n").length < 2) {
-            return response.text("Invalid quick reply field! " + iData.fieldName).bad();
-        }
-
-        if ((iData.message || "").trim().length < 1) {
-            return response.text("No message provided for " + iData.fieldName).bad();
-        }
-    }
-
     store.beginTransaction();
     try {
-        const conversation = Conversation.create(slug, req.postParams.name, req.postParams.greeting);
+        const conversation = Conversation.create(slug, validator.getValue("name"), validator.getValue("greeting"));
         for (let field in req.postParams.interactions) {
             let iData = req.postParams.interactions[field];
 
@@ -244,7 +276,7 @@ app.get("/download", function(req) {
     const cal = new java.util.GregorianCalendar(java.util.TimeZone.getTimeZone("UTC"));
     const xlsDateFormat = createHelper.createDataFormat().getFormat("dd.MM.yyyy HH:mm:ss");
 
-    conversation.submissions.forEach(function(submission, index) {
+    Conversation.getAllSubmissions(conversation).forEach(function(submission, index) {
         let row = sheet.createRow(index + 1); // +1 => header is row 0
 
         // created

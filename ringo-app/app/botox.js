@@ -58,10 +58,11 @@ const onmessage = function(event) {
         }
 
         if (message.message && message.message.text) {
-            if (message.message.text.toLowerCase() === "help" || message.message.text.toLowerCase() === "hilfe") {
+            const tlow = message.message.text.toLowerCase();
+            if (tlow === "help" || tlow === "hilfe") {
                 bot.sendTextMessage(message.sender.id, "This is an interactive survey bot made by Team ORF for the EditorsLab in Munich. Just drop a line to participate. Use 'stop' to stop any survey.");
                 return;
-            } else if (message.message.text.toLowerCase() === "stop") {
+            } else if (tlow === "stop" || tlow === "reset" || tlow === "abbrechen") {
                 bot.sendTextMessage(message.sender.id, "You said stop, I will respect that and you can start from the beginning.");
                 if (state != null) {
                     state.delete();
@@ -76,6 +77,7 @@ const onmessage = function(event) {
             if (latestConversation == null) {
                 bot.sendTextMessage(message.sender.id, "Sorry, no active surveys \uD83D\uDE1E");
             } else {
+                // fixme implement a search or display at least more conversations
                 bot.sendButtonTemplate(message.sender.id, "Do you want to participate in this survey?", [
                     {
                         "type": "postback",
@@ -132,7 +134,6 @@ const processState = function(bot, state, message, conversation) {
         } else {
             let submission = Submission.create(conversation, new Date(), message.sender.id, stateConfig.answers);
             submission.save();
-            conversation.submissions.invalidate();
             log.info("Stored submission {} into database.", submission);
 
             bot.sendTextMessage(message.sender.id, "Thank you for your participation \uD83D\uDC4D");
